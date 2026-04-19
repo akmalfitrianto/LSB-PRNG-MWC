@@ -1,0 +1,12 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# Database
+database/stego_history.db
+
+# Log file
+stego_app.log
+
+# IDE
+.vscode/
