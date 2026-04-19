@@ -1,34 +1,3 @@
-"""
-================================================================================
-SKRIP   : utilitas_penelitian/uji_histogram.py
-PROJECT : Stego MWC — Steganografi LSB + PRNG Multiply-With-Carry
-TUJUAN  : Bab 4 Skripsi — Analisis Histogram Citra
---------------------------------------------------------------------------------
-FUNGSI SKRIP INI:
-    Menghasilkan dan menyimpan grafik perbandingan histogram antara citra cover
-    (asli) dan citra stego (setelah embedding). Histogram yang hampir identik
-    membuktikan bahwa metode LSB tidak mengubah distribusi intensitas piksel
-    secara signifikan — ini adalah bukti kunci imperceptibility steganografi.
-
-    GRAFIK YANG DIHASILKAN (disimpan sebagai file PNG resolusi tinggi):
-      1. Histogram RGB Cover vs Stego — 3 subplot (R, G, B) berdampingan.
-      2. Histogram gabungan (grayscale) — cover dan stego di satu plot.
-      3. Grafik selisih histogram — menunjukkan perbedaan frekuensi tiap intensitas.
-      4. (Opsional) Perbandingan citra side-by-side.
-
-CARA PAKAI:
-    1. Jalankan embedding via aplikasi utama DULU.
-    2. Sesuaikan konfigurasi di bawah.
-    3. Jalankan dari terminal:
-           python utilitas_penelitian/uji_histogram.py
-    4. File grafik tersimpan di folder output_grafik/ (bisa diatur di konfigurasi).
-    5. Masukkan file gambar ke naskah skripsi Bab 4.
-
-DEPENDENSI:
-    pip install matplotlib Pillow numpy
-================================================================================
-"""
-
 import sys
 from pathlib import Path
 
@@ -108,12 +77,7 @@ def setup_tema_gelap() -> None:
 
 
 def muat_citra(path: str) -> tuple[np.ndarray, np.ndarray]:
-    """
-    Memuat citra dan mengembalikan array RGB dan array grayscale.
-
-    Returns:
-        tuple: (array_rgb uint8 (H,W,3), array_gray uint8 (H,W))
-    """
+    
     with Image.open(path) as img:
         rgb = np.array(img.convert("RGB"), dtype=np.uint8)
         gray = np.array(img.convert("L"), dtype=np.uint8)
@@ -121,12 +85,7 @@ def muat_citra(path: str) -> tuple[np.ndarray, np.ndarray]:
 
 
 def hitung_histogram(arr_1d: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
-    """
-    Menghitung histogram untuk satu channel (array 1D).
-
-    Returns:
-        tuple: (nilai_intensitas 0-255, frekuensi)
-    """
+    
     bins = np.arange(257)   # 0 sampai 256 (257 tepi = 256 bin)
     freq, edges = np.histogram(arr_1d.ravel(), bins=bins)
     return edges[:-1], freq   # edges[:-1] = 0..255
@@ -139,12 +98,7 @@ def buat_grafik_histogram_rgb(
     arr_stego: np.ndarray,
     path_output: Path,
 ) -> None:
-    """
-    Membuat grafik histogram 3 subplot (R, G, B) — Cover vs Stego.
-
-    Setiap subplot menampilkan dua histogram bertumpuk (cover dan stego)
-    dengan alpha 0.6 agar kedua distribusi terlihat sekaligus.
-    """
+    
     fig, axes = plt.subplots(1, 3, figsize=(15, 4.5), sharey=False)
     fig.suptitle(
         f"{JUDUL_GRAFIK}\nHistogram per Channel Warna (RGB)",
@@ -186,10 +140,7 @@ def buat_grafik_histogram_gabungan(
     arr_stego_gray: np.ndarray,
     path_output: Path,
 ) -> None:
-    """
-    Membuat grafik histogram grayscale dalam satu plot.
-    Menampilkan kesamaan distribusi intensitas secara keseluruhan.
-    """
+    
     fig, ax = plt.subplots(figsize=(10, 4.5))
     fig.suptitle(
         f"{JUDUL_GRAFIK}\nHistogram Grayscale (Gabungan RGB)",
@@ -233,12 +184,7 @@ def buat_grafik_selisih_histogram(
     arr_stego: np.ndarray,
     path_output: Path,
 ) -> None:
-    """
-    Membuat grafik selisih histogram (Δfrekuensi = stego − cover) per channel.
-
-    Selisih mendekati nol di semua intensitas membuktikan distribusi piksel
-    tidak berubah secara bermakna setelah embedding.
-    """
+    
     fig, axes = plt.subplots(1, 3, figsize=(15, 4), sharey=False)
     fig.suptitle(
         f"{JUDUL_GRAFIK}\nSelisih Frekuensi Histogram Δ = (Stego − Cover)",
@@ -289,14 +235,7 @@ def buat_grafik_dashboard_lengkap(
     arr_stego_gray: np.ndarray,
     path_output: Path,
 ) -> None:
-    """
-    Membuat satu halaman grafik komprehensif yang menggabungkan semua analisis:
-      Baris 1: Tampilan citra cover dan stego (thumbnail).
-      Baris 2: Histogram RGB tiga channel.
-      Baris 3: Histogram grayscale + selisih histogram.
-
-    Grafik ini cocok untuk satu halaman penuh di Bab 4 skripsi.
-    """
+    
     fig = plt.figure(figsize=(16, 12), facecolor=BG_DARK)
     fig.suptitle(
         f"{JUDUL_GRAFIK}\nAnalisis Komprehensif Kualitas Citra Stego",
@@ -381,10 +320,7 @@ def cetak_statistik_histogram(
     arr_cover: np.ndarray,
     arr_stego: np.ndarray,
 ) -> None:
-    """
-    Mencetak statistik ringkasan perbedaan histogram ke terminal.
-    Berguna untuk tabel Bab 4.
-    """
+    
     print("\n  ┌─────────────────────────────────────────────────────────┐")
     print("  │   STATISTIK PERBANDINGAN HISTOGRAM                      │")
     print("  ├──────────┬──────────────┬──────────────┬────────────────┤")

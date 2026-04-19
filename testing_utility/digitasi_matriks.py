@@ -1,32 +1,3 @@
-"""
-================================================================================
-SKRIP   : utilitas_penelitian/digitasi_matriks.py
-PROJECT : Stego MWC — Steganografi LSB + PRNG Multiply-With-Carry
-TUJUAN  : Bab 4 Skripsi — Dokumentasi Nilai Piksel (Digitasi Matriks)
---------------------------------------------------------------------------------
-FUNGSI SKRIP INI:
-    Mencetak nilai piksel mentah (integer 0–255) dari region tertentu pada
-    citra cover DAN citra stego secara berdampingan ke terminal, dalam format
-    tabel yang rapi dan siap di-screenshot untuk ditempel ke naskah skripsi.
-
-    OUTPUT YANG DIHASILKAN:
-      1. Tabel matriks channel Red (R) citra cover — region yang dipilih.
-      2. Tabel matriks channel Red (R) citra stego — region yang sama.
-      3. Tabel selisih (Δ) antara keduanya — menunjukkan piksel yang berubah.
-      4. Koordinat MWC yang jatuh di dalam region tersebut (piksel mana yang dimodifikasi).
-
-CARA PAKAI:
-    1. Jalankan proses embedding DULU via aplikasi utama (main.py).
-    2. Ganti nilai konfigurasi di bawah (bagian ── KONFIGURASI ──).
-    3. Jalankan skrip ini dari terminal VS Code di root project:
-           python utilitas_penelitian/digitasi_matriks.py
-    4. Screenshot hasil terminal → tempel ke Bab 4 naskah skripsi.
-
-DEPENDENSI:
-    pip install Pillow numpy
-================================================================================
-"""
-
 import sys
 from pathlib import Path
 
@@ -76,12 +47,12 @@ TEAL   = "\033[96m"    # Aksen header
 
 
 def cetak_pemisah(karakter: str = "─", lebar: int = 72) -> None:
-    """Mencetak garis pemisah horizontal."""
+    
     print(karakter * lebar)
 
 
 def cetak_judul(teks: str) -> None:
-    """Mencetak judul section yang menonjol."""
+    
     print()
     cetak_pemisah("═")
     print(f"{TEAL}{TEBAL}  {teks}{RESET}")
@@ -89,22 +60,13 @@ def cetak_judul(teks: str) -> None:
 
 
 def cetak_subjudul(teks: str) -> None:
-    """Mencetak subjudul."""
+    
     print(f"\n{BIRU}{TEBAL}  {teks}{RESET}")
     cetak_pemisah("─", 50)
 
 
 def format_sel(nilai: int, dimodifikasi: bool = False) -> str:
-    """
-    Memformat satu sel tabel dengan padding dan warna.
-
-    Args:
-        nilai       : Nilai piksel (0–255).
-        dimodifikasi: True jika piksel ini diubah oleh LSB embedding.
-
-    Returns:
-        str: String yang sudah diformat dan diwarnai.
-    """
+    
     s = f"{nilai:3d}"
     if dimodifikasi:
         return f"{MERAH}{TEBAL}{s}{RESET}"
@@ -121,20 +83,7 @@ def cetak_matriks(
     channel: int,
     koordinat_dimodifikasi: set[tuple[int, int]] | None = None,
 ) -> None:
-    """
-    Mencetak matriks nilai piksel satu channel dari region tertentu.
-
-    Piksel yang termasuk dalam koordinat_dimodifikasi akan dicetak berwarna
-    merah tebal, memudahkan identifikasi mana piksel yang diubah LSB.
-
-    Args:
-        arr                  : Array numpy (tinggi, lebar, 3) citra.
-        label                : Nama label (misal: "CITRA COVER").
-        x_mulai, y_mulai     : Koordinat pojok kiri atas region.
-        lebar, tinggi        : Ukuran region yang ditampilkan.
-        channel              : Indeks channel (0=R, 1=G, 2=B).
-        koordinat_dimodifikasi: Set koordinat (x, y) piksel yang dimodifikasi LSB.
-    """
+    
     if koordinat_dimodifikasi is None:
         koordinat_dimodifikasi = set()
 
@@ -166,12 +115,7 @@ def cetak_matriks_selisih(
     tinggi: int,
     channel: int,
 ) -> None:
-    """
-    Mencetak matriks selisih (Δ = stego − cover) untuk menunjukkan perubahan piksel.
-
-    Selisih ≠ 0 berarti piksel tersebut dimodifikasi oleh embedding LSB.
-    Nilai selisih hanya bisa 0, +1, atau -1 untuk metode LSB 1-bit.
-    """
+    
     cetak_subjudul(f"MATRIKS SELISIH Δ = (Stego − Cover) — Channel {NAMA_CHANNEL[channel]}")
 
     header = "     "
@@ -208,12 +152,7 @@ def cetak_bit_lsb(
     channel: int,
     koordinat_dimodifikasi: set[tuple[int, int]] | None = None,
 ) -> None:
-    """
-    Mencetak matriks bit LSB (0 atau 1) dari setiap piksel dalam region.
-
-    Ini sangat berguna untuk menunjukkan secara langsung bit mana yang
-    disisipkan — langsung terlihat pola 0 dan 1 yang membentuk pesan.
-    """
+    
     if koordinat_dimodifikasi is None:
         koordinat_dimodifikasi = set()
 
@@ -246,18 +185,7 @@ def tampilkan_koordinat_mwc_dalam_region(
     tinggi: int,
     maks_tampil: int = 20,
 ) -> set[tuple[int, int]]:
-    """
-    Menampilkan koordinat MWC yang jatuh di dalam region yang dipilih.
-
-    Args:
-        koordinat_semua: Seluruh daftar koordinat dari MWC generator.
-        x_mulai, y_mulai: Pojok kiri atas region.
-        lebar, tinggi   : Ukuran region.
-        maks_tampil     : Batas maksimum koordinat yang dicetak.
-
-    Returns:
-        set: Koordinat (x, y) yang jatuh di dalam region (untuk highlight).
-    """
+    
     cetak_subjudul("KOORDINAT MWC YANG JATUH DI DALAM REGION INI")
 
     x_akhir = x_mulai + lebar

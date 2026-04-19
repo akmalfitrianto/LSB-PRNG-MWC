@@ -1,37 +1,3 @@
-"""
-================================================================================
-SKRIP   : utilitas_penelitian/uji_noise_map.py
-PROJECT : Stego MWC — Steganografi LSB + PRNG Multiply-With-Carry
-TUJUAN  : Bab 4 Skripsi — Visualisasi Sebaran Piksel yang Dimodifikasi (Noise Map)
---------------------------------------------------------------------------------
-FUNGSI SKRIP INI:
-    Menghasilkan visualisasi dari piksel-piksel yang berubah akibat proses
-    embedding LSB, dan membuktikan bahwa pola perubahannya bersifat acak/tersebar
-    merata (bukan terkonsentrasi di satu area) berkat PRNG MWC.
-
-    OUTPUT YANG DIHASILKAN (file PNG resolusi tinggi):
-      1. Noise Map Binary  : Gambar hitam-putih. Piksel putih = dimodifikasi.
-      2. Noise Map Overlay : Cover + highlight warna pada piksel yang berubah.
-      3. Peta Koordinat MWC: Scatter plot koordinat (x, y) yang dihasilkan MWC.
-      4. Analisis Sebaran  : Heatmap distribusi spasial perubahan piksel.
-      5. Dashboard Lengkap : Semua visualisasi dalam satu halaman.
-
-    INTERPRETASI UNTUK SKRIPSI:
-      - Noise map yang tersebar merata → penyisipan tidak terdeteksi oleh mata.
-      - Pola acak MWC berbeda dengan pola sekuensial yang mudah dideteksi.
-      - Kepadatan perubahan rendah (<<1% piksel) → imperceptible.
-
-CARA PAKAI:
-    1. Jalankan embedding via aplikasi utama DULU.
-    2. Sesuaikan konfigurasi di bawah.
-    3. Jalankan:  python utilitas_penelitian/uji_noise_map.py
-    4. File tersimpan di folder output_grafik/.
-
-DEPENDENSI:
-    pip install matplotlib Pillow numpy
-================================================================================
-"""
-
 import sys
 from pathlib import Path
 
@@ -114,10 +80,7 @@ def deteksi_piksel_berubah(
     arr_stego: np.ndarray,
     channel: int = 0,
 ) -> np.ndarray:
-    """
-    Membuat array boolean (H×W): True jika piksel di channel tertentu berubah.
-    Channel 0 = Red (channel yang digunakan oleh stego_lsb.py).
-    """
+    
     return arr_cover[:, :, channel] != arr_stego[:, :, channel]
 
 
@@ -140,10 +103,7 @@ def buat_noise_map_binary(
     tinggi: int,
     path_output: Path,
 ) -> None:
-    """
-    Membuat gambar hitam-putih: putih = piksel berubah, hitam = tidak berubah.
-    Kepadatan piksel putih menunjukkan seberapa banyak pesan yang disisipkan.
-    """
+    
     fig, ax = plt.subplots(figsize=(8, 6))
     fig.patch.set_facecolor(BG_DARK)
 
@@ -184,10 +144,7 @@ def buat_noise_map_overlay(
     mask_berubah: np.ndarray,
     path_output: Path,
 ) -> None:
-    """
-    Menampilkan citra cover asli dengan highlight warna teal pada piksel yang berubah.
-    Lebih intuitif dari noise map binary untuk presentasi skripsi.
-    """
+    
     # Buat salinan RGBA agar bisa menambah alpha layer
     overlay = arr_cover.copy()
 
@@ -235,12 +192,7 @@ def buat_scatter_koordinat_mwc(
     tinggi: int,
     path_output: Path,
 ) -> None:
-    """
-    Membuat scatter plot koordinat (x, y) yang dihasilkan MWC.
-
-    Distribusi acak merata membuktikan MWC menghasilkan koordinat yang tidak
-    berkluster/terpola — berbeda signifikan dengan penyisipan sekuensial.
-    """
+    
     xs = [x for x, y in koordinat]
     ys = [y for x, y in koordinat]
 
@@ -320,17 +272,7 @@ def buat_heatmap_sebaran(
     path_output: Path,
     ukuran_sel: int = 32,
 ) -> None:
-    """
-    Membuat heatmap distribusi spasial perubahan piksel.
-
-    Citra dibagi menjadi grid sel-sel kecil (ukuran_sel × ukuran_sel piksel).
-    Intensitas warna setiap sel menunjukkan berapa banyak piksel yang berubah
-    di dalam sel tersebut. Distribusi merata → tidak ada area yang 'terlalu banyak'
-    atau 'terlalu sedikit' dimodifikasi.
-
-    Args:
-        ukuran_sel: Ukuran satu sel grid dalam piksel. Default 32×32.
-    """
+    
     n_baris = tinggi // ukuran_sel
     n_kolom = lebar  // ukuran_sel
 
