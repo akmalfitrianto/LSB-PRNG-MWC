@@ -351,6 +351,40 @@ class FrameEmbedding(ctk.CTkFrame):
         self._lbl_status.configure(text="✓  Embedding berhasil! Data tersimpan ke riwayat.", text_color=T.AKSEN_SUKSES)
         messagebox.showinfo("Berhasil!", f"Embedding selesai.\n\nFile: {hasil.path_stego.name}\nPSNR: {metrik['psnr']:.4f} dB\nMSE:  {metrik['mse']:.6f}")
 
+        # Kosongkan semua field setelah pengguna klik OK
+        self._kosongkan_semua_field()
+
+    def _kosongkan_semua_field(self) -> None:
+        # Reset path cover
+        self._path_cover = None
+        self._entry_path.configure(state="normal")
+        self._entry_path.delete(0, "end")
+        self._entry_path.configure(state="disabled")
+
+        # Reset textbox pesan
+        self._textbox_pesan.delete("1.0", "end")
+        self._lbl_counter.configure(text="0 karakter", text_color=T.TEKS_SEKUNDER)
+        self._lbl_sumber.configure(text="")
+
+        # Reset kunci
+        self._entry_kunci.delete(0, "end")
+        self._var_tampil.set(False)
+        self._entry_kunci.configure(show="●")
+
+        # Reset preview
+        self._lbl_preview.configure(image=None, text="Belum ada\ncitra dipilih",
+                                    text_color=T.TEKS_DISABLED)
+        self._ctk_img_prev = None
+        self._lbl_info_citra.configure(text="")
+        self._lbl_kapasitas.configure(text="")
+
+        # Reset panel hasil
+        self._f_hasil_detail.pack_forget()
+        self._lbl_hasil_ph.pack(pady=20)
+        for lbl in self._rows_hasil.values():
+            lbl.configure(text="—")
+        self._lbl_status.configure(text="")
+
     def _on_gagal(self, msg: str) -> None:
         self._set_loading(False)
         self._lbl_status.configure(text=f"✕  {msg[:80]}", text_color=T.AKSEN_DANGER)
