@@ -95,15 +95,21 @@ class MWCGenerator:
             for x in range(lebar)
         ]
 
-        # ── Partial Fisher-Yates Shuffle via MWC ─────────────────────────────
+        # ── Partial Fisher-Yates Shuffle MAJU via MWC ────────────────────────
+        # Iterasi dari depan: posisi i ditukar dengan posisi acak j ∈ [i, n-1].
+        # Hasilnya: pool[:jumlah] berisi koordinat unik dan teracak.
+        #
+        # Sifat kunci (prefix-consistent):
+        #   hasilkan_koordinat(k)[:m] == hasilkan_koordinat(m)  untuk m ≤ k
+        # karena iterasi i=0..m-1 mengkonsumsi MWC call yang sama persis.
         n = kapasitas
-        for i in range(n - 1, n - 1 - jumlah, -1):
-            # j = output MWC (Pers. 2.1 & 2.2) mod (i+1) → indeks acak [0, i]
-            j = self._next() % (i + 1)
+        for i in range(jumlah):
+            # j = i + (MWC output mod sisa pool) → j ∈ [i, n-1]
+            j = i + self._next() % (n - i)
             pool[i], pool[j] = pool[j], pool[i]
 
-        # Kembalikan 'jumlah' elemen terakhir (hasil shuffle)
-        return pool[n - jumlah:]
+        # Kembalikan 'jumlah' elemen PERTAMA (hasil shuffle maju)
+        return pool[:jumlah]
 
     def get_state(self) -> dict:
         
